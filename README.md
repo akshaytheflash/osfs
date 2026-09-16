@@ -1,7 +1,7 @@
 # OSFS — Open Source Forensic Scanner
 
 <p align="center">
-  <strong>OSFS</strong> is a modular, open-source digital forensic scanner built for detecting unauthorized software, anti-forensic techniques, cheating tools, macros, and suspicious system modifications. Designed for system administrators, game server staff, security researchers, and digital forensic investigators.
+  <strong>OSFS</strong> is a modular, open-source digital forensic scanner built for detecting unauthorized software, anti-forensic techniques, malware persistence mechanisms, and suspicious system modifications. Designed for system administrators, security researchers, incident responders, and digital forensic investigators.
 </p>
 
 ---
@@ -26,13 +26,13 @@
 
 OSFS is a next-generation forensic scanning framework. It scans a system for evidence of:
 
-- **Cheats and injectors** — DLL injection, process hollowing, memory manipulation, fileless malware
-- **Macros** — software macros, onboard hardware memory macros, autoclickers
+- **Malware and persistence** — DLL injection, process hollowing, memory manipulation, fileless malware
+- **Persistence mechanisms** — scheduled tasks, registry modifications, startup items, service creation
 - **Anti-forensic bypasses** — event log tampering, prefetch deletion, USN journal clearing, registry modification, disk replacement, time manipulation
 - **File execution artifacts** — prefetch, BAM registry, jump lists, WER crash dumps, recent file shortcuts, task scheduler logs
-- **Environment anomalies** — virtual machines, unplugged devices, multiple mice, network shared drives, unsigned processes, injected DLLs
+- **Environment anomalies** — virtual machines, unplugged devices, network shared drives, unsigned processes, injected DLLs
 
-OSFS is **not** a cheat detection tool for a single game. It is a **general-purpose forensic scanner** that can be extended with modules for any platform, any artifact type, and any detection technique.
+OSFS is a **general-purpose forensic scanner** that can be extended with modules for any platform, any artifact type, and any detection technique.
 
 ---
 
@@ -150,40 +150,34 @@ OSFS is designed around a **modular scanner architecture**:
 | Thread Manipulation | Detect modified thread behavior | TODO |
 | Token Tampering | Detect process token modifications | TODO |
 
-### Macro Scanners
+### Malware & Persistence Scanners
 
 | Module | Description | Status |
 |--------|-------------|--------|
-| Macro File Analysis | Detect 30+ macro file modifications | TODO |
-| Deleted Macros | Detect deleted/renamed macro files | TODO |
-| Onboard Memory Macros | Hardware mouse/keyboard macro detection | TODO |
-| Macro Process Memory | Regex filtering of macro software memory | TODO |
-| MouseKeys Detection | Detect MouseKeys autoclicker usage | TODO |
+| Registry Persistence | Detect persistent registry modifications | TODO |
+| Service Analysis | Detect suspicious Windows services | TODO |
+| Startup Items | Analyze startup folder and run keys | TODO |
+| Scheduled Tasks | Analyze scheduled task execution | TODO |
+| DLL Sideloading | Detect DLL hijacking attempts | TODO |
 
-### Anti-Forensic Bypass Detection
+### Network & Browser Scanners
 
 | Module | Description | Status |
 |--------|-------------|--------|
-| Event Log Bypass | Detect .evtx log tampering | TODO |
-| Time Change Bypass | Detect system time manipulation | TODO |
-| Prefetch Bypass | Detect prefetch folder/file tampering | TODO |
-| USN Journal Clearing | Detect $J datastream clearing | TODO |
-| Disk Replacement | Detect formatted/replaced drives | TODO |
-| Unplugged Devices | Detect recently unplugged devices | TODO |
-| String Cleaners | Detect Process Hacker/System Informer | TODO |
-| Code Import Detection | Detect base64/base32 anti-forensic code | TODO |
-| Shadow Copy Deletion | Detect volume shadow copy removal | TODO |
-| AutoRun Bypass | Detect AutoRun-based persistence | TODO |
+| Network Connections | Analyze active and historical connections | TODO |
+| Browser History | Parse browser history databases | TODO |
+| DNS Cache | Extract DNS resolver cache | TODO |
+| Firewall Logs | Analyze Windows Firewall logs | TODO |
 
 ### Environment Checks
 
 | Module | Description | Status |
 |--------|-------------|--------|
 | Virtual Machine Detection | Detect VM environments | TODO |
-| Multiple Mice | Detect multiple mouse devices (VID/PID) | TODO |
 | Network Shares | Detect network shared drive execution | TODO |
 | Digital Signature Verification | Verify file signatures | TODO |
-| XRay Texture Packs | Detect XRay texture packs | TODO |
+| Installed Software | Enumerate installed applications | TODO |
+| User Account Analysis | Detect suspicious user accounts | TODO |
 
 ---
 
@@ -219,13 +213,20 @@ OSFS is designed around a **modular scanner architecture**:
 - [ ] Token tampering detection
 
 ### Phase 4 — Anti-Forensic Detection
-- [ ] Event log bypass detection
+- [ ] Event log tampering detection
 - [ ] Time manipulation detection
 - [ ] Disk replacement detection
 - [ ] Shadow copy deletion detection
-- [ ] Code import detection
+- [ ] USN journal clearing detection
+- [ ] AutoRun persistence detection
 
-### Phase 5 — Web GUI
+### Phase 5 — Network & Browser Analysis
+- [ ] Network connection analysis
+- [ ] Browser history parsing
+- [ ] DNS cache extraction
+- [ ] Firewall log analysis
+
+### Phase 6 — Web GUI
 - [ ] Backend API server
 - [ ] Frontend dashboard
 - [ ] Real-time scan monitoring via WebSocket
@@ -233,12 +234,12 @@ OSFS is designed around a **modular scanner architecture**:
 - [ ] User authentication & role management
 - [ ] Docker deployment
 
-### Phase 6 — Cross-Platform
+### Phase 7 — Cross-Platform
 - [ ] Linux artifact scanners
 - [ ] macOS artifact scanners
 - [ ] Platform abstraction layer
 
-### Phase 7 — Advanced Features
+### Phase 8 — Advanced Features
 - [ ] Plugin marketplace
 - [ ] ML-based anomaly detection
 - [ ] SIEM integration
@@ -394,10 +395,15 @@ osfs/
 │   │   ├── unsigned_executable/
 │   │   ├── memory_scanner/
 │   │   └── process_hollowing/
-│   ├── macro/
-│   │   ├── macro_file/
-│   │   ├── onboard_memory/
-│   │   └── mousekeys/
+│   ├── malware/
+│   │   ├── registry_persistence/
+│   │   ├── service_analysis/
+│   │   ├── startup_items/
+│   │   └── dll_sideloading/
+│   ├── network/
+│   │   ├── connections/
+│   │   ├── browser_history/
+│   │   └── dns_cache/
 │   └── antiforensic/
 │       ├── event_log_tamper/
 │       ├── time_manipulation/
@@ -478,39 +484,38 @@ These are areas where OSFS needs community contributions. Pick something, claim 
 
 - [ ] **Unsigned DLL scanner** — Enumerate loaded DLLs in all processes, verify digital signatures, flag unsigned modules.
 - [ ] **Unsigned executable scanner** — Check all running executables against Windows trust verification.
-- [ ] **Memory string scanner** — Scan process memory for known cheat signatures, injected code patterns, and suspicious strings.
+- [ ] **Memory string scanner** — Scan process memory for known malware signatures, injected code patterns, and suspicious strings.
 - [ ] **Process hollowing detector** — Compare on-disk vs in-memory PE headers to detect hollowed processes.
 - [ ] **Thread manipulation detector** — Detect suspicious thread creation patterns, remote thread injection, APC injection.
 - [ ] **Token tampering detector** — Detect process token privilege escalation and impersonation.
 - [ ] **Restarted process detector** — Track process lifetimes and flag suspiciously restarted processes.
 
-### Macro & Input Scanners
-
-- [ ] **Macro file analyzer** — Detect 30+ macro file modifications across common macro software paths.
-- [ ] **Deleted macro detector** — Find evidence of deleted, renamed, or overwritten macro files.
-- [ ] **Onboard memory macro scanner** — Use low-level hardware hooks to detect macros stored in mouse/keyboard onboard memory.
-- [ ] **Macro process memory scanner** — Regex and pattern filtering of macro software process memory for cheat traces.
-- [ ] **MouseKeys detector** — Detect Windows MouseKeys autoclicker usage.
-
 ### Anti-Forensic Detection
 
-- [ ] **Event log bypass detector** — Detect .evtx file corruption, deletion, and renaming.
+- [ ] **Event log tampering detector** — Detect .evtx file corruption, deletion, and renaming.
 - [ ] **Time manipulation detector** — Cross-reference system time across multiple artifacts to detect time changes.
+- [ ] **Prefetch bypass detector** — Detect prefetch folder/file tampering.
+- [ ] **USN journal clearing detector** — Detect $J datastream clearing.
 - [ ] **Disk replacement detector** — Detect formatted or replaced drives by comparing modification times against boot time.
 - [ ] **Unplugged device detector** — Track USB device connect/disconnect events and flag suspicious removals.
-- [ ] **String cleaner detector** — Detect execution of string cleaning tools (Process Hacker, System Informer).
-- [ ] **Code import detector** — Scan console process memory for base64/base32 encoded anti-forensic code.
 - [ ] **Shadow copy detector** — Detect volume shadow copy deletion.
 - [ ] **AutoRun detector** — Detect AutoRun/autorun.inf based persistence mechanisms.
 - [ ] **Network share detector** — Detect execution from network shared locations.
 - [ ] **VM detection** — Detect virtual machine environments and host-to-guest input injection.
 
+### Network & Browser Analysis
+
+- [ ] **Network connection analyzer** — Analyze active and historical network connections.
+- [ ] **Browser history parser** — Parse browser history databases from Chrome, Firefox, Edge.
+- [ ] **DNS cache extractor** — Extract DNS resolver cache for forensic analysis.
+- [ ] **Firewall log analyzer** — Analyze Windows Firewall logs for suspicious activity.
+
 ### Environment & Device Checks
 
 - [ ] **Digital signature verifier** — Windows TrustVerify wrapper for file and catalog signature verification.
-- [ ] **Multiple mouse detector** — Detect multiple mouse devices by VID/PID.
-- [ ] **XRay texture pack detector** — Detect XRay texture pack files.
 - [ ] **Device path mapper** — Map `\Device\HarddiskVolumeN` paths to drive letters.
+- [ ] **Installed software analyzer** — Enumerate installed applications and detect suspicious software.
+- [ ] **User account analyzer** — Detect suspicious user accounts and permission changes.
 
 ### Infrastructure & Tooling
 
