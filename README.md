@@ -569,4 +569,4 @@ These are areas where OSFS needs community contributions. Pick something, claim 
 
 ## License
 
-TBD
+MIT — see [LICENSE](LICENSE) for details.
